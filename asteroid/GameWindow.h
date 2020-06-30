@@ -27,7 +27,7 @@ private:
 		framebufferwidth = WINDOW_HEIGHT;
 	}
 public:
-	GameWindow(const char* winName,const int WINDOW_WIDTH=800, const int WINDOW_HEIGHT=600) {
+	GameWindow(const char* winName,const int WINDOW_WIDTH=800, const int WINDOW_HEIGHT=800) {
 		initWindow();
 		createWindow(winName, WINDOW_WIDTH, WINDOW_HEIGHT);
 		glfwGetFramebufferSize(window, &framebufferwidth, &framebufferheight);
