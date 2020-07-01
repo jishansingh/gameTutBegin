@@ -11,9 +11,10 @@ public:
 				allBricks.push_back(new Brick(j, i, rows, cols));
 			}
 		}
-		allBricks[0]->initData();
+		Brick::initTex();
 	}
 	void RenderLevel(Shader* shady) {
+		Brick::initData(shady);
 		Brick::Draw(shady);
 	}
 	~GameLevel(){

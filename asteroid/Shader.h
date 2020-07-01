@@ -105,6 +105,13 @@ public:
 		}
 		glUniform1i(loc, data);
 	}
+	void setUniform2f(const char* un_name, glm::vec2& data) {
+		GLint loc = glGetUniformLocation(this->prog_id, un_name);
+		if (loc < 0) {
+			//std::cout << "warning setting uniform " << un_name << " " << data << std::endl;
+		}
+		glUniform2f(loc, data.x, data.y);
+	}
 	void setUniform1f(const char* un_name, float data) {
 		glUniform1f(glGetUniformLocation(this->prog_id, un_name), data);
 	}

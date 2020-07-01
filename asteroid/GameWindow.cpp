@@ -32,6 +32,13 @@ public:
 		rol = new Roler(0.25f, 0.025f);
 		ball = new Ball(0.025f, 0.025f, 0.025f);
 	}
+	~TestClass() {
+		delete somModel;
+		delete obp;
+		delete rol;
+		delete shady;
+		delete ball;
+	}
 	void updateInputs() {
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			camPosition.z -= 0.01f;
@@ -135,7 +142,8 @@ public:
 	}
 
 };
-std::vector<glm::vec2> Brick::position;
+posLinkList Brick::position;
+Texture* Brick::texture;
 RectData Brick::somData;
 unsigned int Brick::posbo;
 float Brick::brick_height = 0.1f;
@@ -143,7 +151,7 @@ float Brick::brick_width = 0.1f;
 int main() {
 	TestClass* sompob = new TestClass((char*)"new game");
 	sompob->render();
-	
+	Brick::clearData();
 	delete sompob;
 
 }
