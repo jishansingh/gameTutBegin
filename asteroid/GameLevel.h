@@ -21,4 +21,12 @@ public:
 			delete allBricks[i];
 		}
 	}
+	void detectCollision(Ball* ball) {
+		Brick::detectCollision(ball);
+	}
+	void updateModelMatrix(Shader* shady) {
+		glm::mat4 modelMatrix(1.f);
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.f));
+		shady->setUniformMatrix4fv("modelMatrix", GL_FALSE, modelMatrix);
+	}
 };

@@ -4,10 +4,14 @@
 #include"Model.h"
 #include"Brick.h"
 #include "GameLevel.h"
+#include"roler.h"
+#include"ball.h"
 class TestClass : public GameWindow {
 	Model *somModel;
 	GameLevel *obp;
+	Roler* rol;
 	Shader* shady;
+	Ball* ball;
 	glm::vec3 camPosition;
 	float windowRatio;
 public:
@@ -25,7 +29,8 @@ public:
 		shady = new Shader("planetVertexShader.glsl", "planetFragmentShader.glsl", "");
 		camPosition = glm::vec3(0.f, 0.0f, 1.0f);
 		obp = new GameLevel(noOfRows, noOfCol, noOfRows / 2, noOfCol / 2);
-		
+		rol = new Roler(0.25f, 0.025f);
+		ball = new Ball(0.025f, 0.025f, 0.025f);
 	}
 	void updateInputs() {
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -74,13 +79,57 @@ public:
 		shady->setUniformMatrix4fv("projectionMatrix", GL_FALSE, projectionMatrix);
 
 	}
+	void updateMatrix() {
+		glm::vec3 worldUp(0.f, 1.f, 0.f);
+		glm::vec3 camFront(0.f, 0.f, 0.f);
 
+		glm::vec3 lightPos0(-2.0f, 10.0f, 1.0f);
+		//view Matrix
+
+		updateInputs();
+		glm::mat4 viewMatrix(1.f);
+		glm::vec3 front = glm::cross(glm::cross(worldUp, camPosition), worldUp);
+		viewMatrix = glm::lookAt(camPosition, camFront, worldUp);
+
+		//projection matrix
+		float fov = 90.f;
+		float nearPlane = 0.1f;
+		float farPlane = 100.f;
+
+		glm::mat4 projectionMatrix(1.f);
+		int framebufferwidth;
+		int framebufferheight;
+		glfwGetFramebufferSize(window, &framebufferwidth, &framebufferheight);
+		//projectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(framebufferwidth) / framebufferheight, nearPlane, farPlane);
+		//projectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
+		/*float near_plane = 0.1f, far_plane = 100.5f;
+		glm::mat4 projectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);*/
+
+		shady->setUniformMatrix4fv("viewMatrix", GL_FALSE, viewMatrix);
+		shady->setUniformMatrix4fv("projectionMatrix", GL_FALSE, projectionMatrix);
+	}
+	void updateInputs(glm::vec3 &position) {
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			position.x -= 0.01f;
+		else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			position.x += 0.01f;
+	}
 	void preRender() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		shady->Use();
-		updateUniforms(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+		updateMatrix();
+		obp->detectCollision(ball);
+		obp->updateModelMatrix(shady);
 		obp->RenderLevel(shady);
 		//somModel->Draw(shady);
+		updateInputs(rol->position);
+		updateMatrix();
+		rol->updateUniforms(shady);
+		rol->Draw(shady);
+		ball->detectCollision(rol);
+		ball->updateUniforms(shady);
+		ball->Draw(shady);
+
 	}
 	void postRender() {
 	}

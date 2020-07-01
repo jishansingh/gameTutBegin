@@ -1,6 +1,7 @@
 #pragma once
 #include"libs.h"
 #include"Shader.h"
+#include"ball.h"
 class RectData {
 public:
 	unsigned int vao;
@@ -11,10 +12,10 @@ public:
 	void initRectData(float width,float height){
 		float offset = 0.06f;
 		float vertices_box[12]{
-			-width+ offset, width - offset,0.f,
-			-width+ offset,-width+ offset,0.f,
-			 height- offset,-width+ offset,0.f,
-			 height- offset, width- offset,0.f,
+			-width + offset, height - offset,0.f,
+			-width + offset,-height + offset,0.f,
+			 width - offset,-height + offset,0.f,
+			 width - offset, height - offset,0.f,
 		};
 		GLuint indVert[] = {
 			2,1,0,
@@ -74,6 +75,23 @@ public:
 		shady->Use();
 		glBindVertexArray(somData.vao);
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, position.size());
+	}
+	static bool checkOverlap(glm::vec2 vector1, glm::vec2 vector2) {
+		if (abs(vector1.x - vector2.x) < 2 * brick_width && (abs(vector1.y - vector2.y) < 2 * brick_height)) {
+			return true;
+		}
+		return false;
+	}
+	static void detectCollision(Ball* ball) {
+		std::vector<std::vector<glm::vec2>::iterator> itArr;
+		for (auto it = position.begin(); it!= position.end(); it++) {
+			if (checkOverlap(*it, glm::vec2(ball->position.x, ball->position.y))) {
+				itArr.push_back(it);
+			}
+		}
+		for (int i = 0; i < itArr.size(); i++) {
+			position.erase(itArr[i]);
+		}
 	}
 	~Brick() {
 		glDeleteBuffers(1, &posbo);
