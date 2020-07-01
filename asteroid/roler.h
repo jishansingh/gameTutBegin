@@ -9,6 +9,7 @@ public:
 	float rolWidth;
 	float rolHeight;
 	glm::vec3 position;
+	glm::vec3 velocity;
 	Roler(float width, float height) {
 		position = glm::vec3(0.f, -1.f, 0.f);
 		float offset = 0.0f;
@@ -18,6 +19,7 @@ public:
 			 width - offset,-height + offset,1.f,0.f,
 			 width - offset, height - offset,1.f,1.f
 		};
+		velocity = glm::vec3(0.f);
 		rolWidth = width;
 		rolHeight = height;
 		unsigned int noOfVertices = sizeof(vertices_box) / (4 * sizeof(float));
@@ -42,6 +44,15 @@ public:
 	}
 	
 	void Draw(Shader* shady) {
+		position += velocity;
+		if (position.x - rolWidth < -1.f) {
+			position -= velocity;
+		}
+		else if (position.x + rolWidth > 1.f) {
+			position -= velocity;
+		}/*
+		else
+			position += velocity;*/
 		glm::vec2 temp = glm::vec2(position.x, position.y);
 		shady->setUniform2f("offsets[0]", temp);
 		shady->Use();

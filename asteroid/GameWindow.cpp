@@ -115,11 +115,19 @@ public:
 		shady->setUniformMatrix4fv("viewMatrix", GL_FALSE, viewMatrix);
 		shady->setUniformMatrix4fv("projectionMatrix", GL_FALSE, projectionMatrix);
 	}
-	void updateInputs(glm::vec3 &position) {
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			position.x -= 0.01f;
-		else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			position.x += 0.01f;
+	void updateInputs(glm::vec3 &position, glm::vec3& velocity) {
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			if (velocity.x > 0)
+				velocity.x = 0;
+			else
+				velocity.x -= 0.00001f;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			if (velocity.x < 0)
+				velocity.x = 0;
+			else
+				velocity.x += 0.00001f;
+		}
 	}
 	void preRender() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -129,7 +137,7 @@ public:
 		obp->updateModelMatrix(shady);
 		obp->RenderLevel(shady);
 		//somModel->Draw(shady);
-		updateInputs(rol->position);
+		updateInputs(rol->position,rol->velocity);
 		updateMatrix();
 		rol->updateUniforms(shady);
 		rol->Draw(shady);

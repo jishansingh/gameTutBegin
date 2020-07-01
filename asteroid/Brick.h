@@ -22,13 +22,13 @@ public:
 	void addNode(glm::vec2 pos1) {
 		count++;
 		if (head == NULL) {
-			struct Node* tempNode = new Node({ pos1,NULL ,false});
+			struct Node* tempNode = new Node({ pos1,NULL ,true});
 			head = tempNode;
 			head->next = NULL;
 			curNode = head;
 			return;
 		}
-		struct Node* tempNode = new Node({ pos1,NULL,false });
+		struct Node* tempNode = new Node({ pos1,NULL,true });
 		tempNode->next = NULL;
 		curNode->next = tempNode;
 		curNode = tempNode;
@@ -50,11 +50,9 @@ public:
 				if (deleteNode->solid) {
 					flag = true;
 				}
-				else {
-					count--;
-					delete deleteNode;
-					deleteNode = NULL;
-				}
+				count--;
+				delete deleteNode;
+				deleteNode = NULL;
 			}
 			incr++;
 			if (checkOverlap(temp->position, glm::vec2(pos1.x, pos1.y), brick_width, brick_height)) {
@@ -78,10 +76,8 @@ public:
 			if (deleteNode->solid) {
 				flag = true;
 			}
-			else {
-				count--;
-				delete deleteNode;
-			}
+			count--;
+			delete deleteNode;
 			
 		}
 		return flag;
